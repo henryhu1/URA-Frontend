@@ -1,16 +1,17 @@
-import React, { useState, useEffect , ChangeEvent, FormEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
+import Dropzone from 'react-dropzone'
+import compressFiles from './utils/files';
+import ClassifyImageForm from './components/forms/classifyImageForm';
 import './App.css';
 
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
 function App() {
-  const [image, setImage] = useState<File>();
-  const [imageURLString, setImageURLString] = useState("");
   const [classification, setClassification] = useState("");
   const [isClassifying, setIsClassifying] = useState(false);
-  const [dataset, setDataset] = useState<File>();
+  const [dataset, setDataset] = useState<FileList>();
   const [isDataOverLimit, setIsDataOverLimit] = useState(false);
 
   const ref = React.useRef<HTMLInputElement>(null);
@@ -21,60 +22,45 @@ function App() {
     }
   }, [ref]);
 
-  const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
+  const handleFolderInput = (e: ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList) return;
 
-    setImage(file);
-    setImageURLString(URL.createObjectURL(file));
+    let totalSize = 0;
+    Array.from(fileList).forEach(file => {
+        totalSize += file.size;
+    });
+
+    const MAX_SIZE = 10 * 1024 * 1024;  // 10 MB
+    if (totalSize > MAX_SIZE) {
+        alert('Total file size exceeds the 10 MB limit!');
+        setIsDataOverLimit(true);
+        return;
+    }
+    setDataset(fileList);
+    setIsDataOverLimit(false);
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleUpload = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!image) return;
+    if (!dataset) return;
 
+    const zipBlob = await compressFiles(dataset);
     const formData = new FormData();
-    formData.append('image', image);
+    // formData.append('dataset', dataset);
+    formData.append('dataset', zipBlob, 'compressed_folder.zip');
     try {
-      setIsClassifying(true);
-      await axios.post('/classify/', formData, {
+      await axios.post('/classify/upload_and_train/', formData, {
         headers: {
           'enctype': 'multipart/form-data',
           // 'X-CSRFToken': csrftoken,
         }
       }).then(response => {
-        setClassification(response.data);
       });
     } catch (error) {
       console.log(error);
     } finally {
-      setIsClassifying(false);
     }
-  };
-
-  const handleFolderInput = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-
-    // let totalSize = 0;
-    // for (let i = 0; i < files.length; i++) {
-    //     totalSize += files[i].size;
-    // }
-
-    const MAX_SIZE = 10 * 1024 * 1024;  // 10 MB
-    console.log(file.size)
-    console.log(MAX_SIZE)
-    if (file.size > MAX_SIZE) {
-        alert('Total file size exceeds the 10 MB limit!');
-        setIsDataOverLimit(true);
-        return;
-    }
-    setDataset(file)
-    setIsDataOverLimit(false);
-  };
-
-  const handleUpload = async (e: FormEvent<HTMLFormElement>) => {
-    if (!dataset) return;
   }
 
   return (
@@ -95,6 +81,16 @@ function App() {
       </header> */}
       <body className="App-body">
         <form onSubmit={handleUpload}>
+          {/* <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)}>
+            {({getRootProps, getInputProps}) => (
+              <section>
+                <div {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  <p>Drag 'n' drop some files here, or click to select files</p>
+                </div>
+              </section>
+            )}
+          </Dropzone> */}
           <input
             id="stylized"
             type="file"
@@ -106,7 +102,8 @@ function App() {
             Upload
           </button>
         </form>
-        <form onSubmit={handleSubmit}>
+        <ClassifyImageForm setIsClassifying={setIsClassifying} setClassification={setClassification} />
+        {/* <form onSubmit={handleSubmit}>
           <input
             id="stylized"
             type="file"
@@ -123,7 +120,7 @@ function App() {
           <button type="submit">
             Classify
           </button>
-        </form>
+        </form> */}
         {isClassifying ? (
           <div className="loader" />
         ) :
