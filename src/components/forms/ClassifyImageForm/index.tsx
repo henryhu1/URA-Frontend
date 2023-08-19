@@ -1,7 +1,8 @@
-import React, { useState, Dispatch, SetStateAction, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
+import StringConstants from 'constants/strings';
 
-const ClassifyImageForm = (props: ClassifyImageFormProps) => {
+const ClassifyImageForm = ({ setIsClassifying, setClassification }: ClassifyImageFormProps) => {
   const [image, setImage] = useState<File>();
   const [imageURLString, setImageURLString] = useState("");
 
@@ -20,19 +21,19 @@ const ClassifyImageForm = (props: ClassifyImageFormProps) => {
     const formData = new FormData();
     formData.append('image', image);
     try {
-      props.setIsClassifying(true);
+      setIsClassifying(true);
       await axios.post('/classify/', formData, {
         headers: {
           'enctype': 'multipart/form-data',
           // 'X-CSRFToken': csrftoken,
         }
       }).then(response => {
-        props.setClassification(response.data);
+        setClassification(response.data);
       });
     } catch (error) {
       console.log(error);
     } finally {
-      props.setIsClassifying(false);
+      setIsClassifying(false);
     }
   };
 
@@ -52,15 +53,15 @@ const ClassifyImageForm = (props: ClassifyImageFormProps) => {
       ) : <></>
       }
       <button type="submit">
-        Classify
+        {StringConstants.CLASSIFY}
       </button>
     </form>
   );
 };
 
-interface ClassifyImageFormProps {
-  setClassification: Dispatch<SetStateAction<string>>
-  setIsClassifying: Dispatch<SetStateAction<boolean>>
+type ClassifyImageFormProps = {
+  setClassification: Function,
+  setIsClassifying: Function,
 };
 
 export default ClassifyImageForm;
