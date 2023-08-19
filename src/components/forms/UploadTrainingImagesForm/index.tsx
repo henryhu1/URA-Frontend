@@ -51,12 +51,13 @@ const UploadTrainingImagesForm = () => {
           // 'X-CSRFToken': csrftoken,
         }
       }).then(response => {
+        console.log(response);
       });
     } catch (error) {
       console.log(error);
-    } finally {
+    // } finally {
     }
-  }
+  };
 
   return (
     <form onSubmit={handleUpload}>

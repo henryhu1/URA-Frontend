@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, SetStateAction, Dispatch, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import StringConstants from 'constants/strings';
 
@@ -60,8 +60,8 @@ const ClassifyImageForm = ({ setIsClassifying, setClassification }: ClassifyImag
 };
 
 type ClassifyImageFormProps = {
-  setClassification: Function,
-  setIsClassifying: Function,
+  setIsClassifying: Dispatch<SetStateAction<boolean>>,
+  setClassification: Dispatch<SetStateAction<string>>,
 };
 
 export default ClassifyImageForm;

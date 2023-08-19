@@ -27,7 +27,7 @@ function App() {
           Learn React
         </a>
       </header> */}
-      <body className="App-body">
+      <div className="App-body">
         <UploadTrainingImagesForm />
         <ClassifyImageForm setIsClassifying={setIsClassifying} setClassification={setClassification} />
         {isClassifying ? (
@@ -35,7 +35,7 @@ function App() {
         ) :
         classification ?? <></>
         }
-      </body>
+      </div>
     </div>
   );
 }
