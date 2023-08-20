@@ -1,18 +1,17 @@
-import React, { useState, } from 'react';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
-import ClassifyImageForm from './components/forms/ClassifyImageForm';
+import Main from 'components/Main';
+import Login from 'components/Login';
+import Navbar from 'components/Navbar';
 import 'App.css';
-import UploadTrainingImagesForm from 'components/forms/UploadTrainingImagesForm';
 
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
-function App() {
-  const [classification, setClassification] = useState("");
-  const [isClassifying, setIsClassifying] = useState(false);
-
-  return (
-    <div className="App">
+const App = () => (
+  <div className="App">
+    <BrowserRouter>
       {/* <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -27,17 +26,17 @@ function App() {
           Learn React
         </a>
       </header> */}
-      <div className="App-body">
-        <UploadTrainingImagesForm />
-        <ClassifyImageForm setIsClassifying={setIsClassifying} setClassification={setClassification} />
-        {isClassifying ? (
-          <div className="loader" />
-        ) :
-        classification ?? <></>
-        }
-      </div>
-    </div>
-  );
-}
+
+      <Navbar />
+      <Routes>
+        <Route path="/" Component={Main} />
+        <Route path="/login" Component={Login} />
+        {/* Add more routes as needed */}
+      </Routes>
+
+  </BrowserRouter>
+    
+  </div>
+);
 
 export default App;

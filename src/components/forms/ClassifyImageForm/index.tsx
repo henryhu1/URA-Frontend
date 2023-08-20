@@ -1,10 +1,16 @@
 import React, { useState, SetStateAction, Dispatch, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import StringConstants from 'constants/strings';
+import 'components/forms/forms.css';
 
-const ClassifyImageForm = ({ setIsClassifying, setClassification }: ClassifyImageFormProps) => {
+const ClassifyImageForm = ({
+  setIsClassifying,
+  setClassification,
+  customizedClassifier = false
+}: ClassifyImageFormProps) => {
   const [image, setImage] = useState<File>();
   const [imageURLString, setImageURLString] = useState("");
+  const classifyingURL = customizedClassifier ? '/classify/customized_classifier/' : '/classify/';
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
@@ -22,7 +28,7 @@ const ClassifyImageForm = ({ setIsClassifying, setClassification }: ClassifyImag
     formData.append('image', image);
     try {
       setIsClassifying(true);
-      await axios.post('/classify/', formData, {
+      await axios.post(classifyingURL, formData, {
         headers: {
           'enctype': 'multipart/form-data',
           // 'X-CSRFToken': csrftoken,
@@ -62,6 +68,7 @@ const ClassifyImageForm = ({ setIsClassifying, setClassification }: ClassifyImag
 type ClassifyImageFormProps = {
   setIsClassifying: Dispatch<SetStateAction<boolean>>,
   setClassification: Dispatch<SetStateAction<string>>,
+  customizedClassifier?: boolean,
 };
 
 export default ClassifyImageForm;

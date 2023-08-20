@@ -3,6 +3,7 @@ import axios from 'axios';
 import compressFiles from 'utils/files';
 import NumberConstants from 'constants/numbers';
 import StringConstants from 'constants/strings';
+import 'components/forms/forms.css';
 
 const UploadTrainingImagesForm = () => {
   const [zippedDataset, setZippedDataset] = useState<Blob>();
