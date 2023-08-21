@@ -1,9 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
-import Main from 'components/Main';
 import Login from 'components/Login';
+import Main from 'components/Main';
+import MyAccount from 'components/MyAccount';
 import Navbar from 'components/Navbar';
+import VerifyAccount from 'components/VerifyAccount';
 import 'App.css';
 
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
@@ -31,6 +33,8 @@ const App = () => (
       <Routes>
         <Route path="/" Component={Main} />
         <Route path="/login" Component={Login} />
+        <Route path="/verifyaccount" Component={VerifyAccount} />
+        <Route path="/myaccount" Component={MyAccount} />
         {/* Add more routes as needed */}
       </Routes>
 

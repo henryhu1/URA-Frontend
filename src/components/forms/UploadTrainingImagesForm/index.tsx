@@ -12,8 +12,8 @@ const UploadTrainingImagesForm = () => {
   const ref = React.useRef<HTMLInputElement>(null);
   useEffect(() => {
     if (ref.current !== null) {
-      ref.current.setAttribute("directory", "");
-      ref.current.setAttribute("webkitdirectory", "");
+      ref.current.setAttribute('directory', '');
+      ref.current.setAttribute('webkitdirectory', '');
     }
   }, [ref]);
 
@@ -73,7 +73,6 @@ const UploadTrainingImagesForm = () => {
         )}
       </Dropzone> */}
       <input
-        id="stylized"
         type="file"
         name="upload dataset"
         onChange={handleFolderInput}

@@ -9,7 +9,7 @@ const ClassifyImageForm = ({
   customizedClassifier = false
 }: ClassifyImageFormProps) => {
   const [image, setImage] = useState<File>();
-  const [imageURLString, setImageURLString] = useState("");
+  const [imageURLString, setImageURLString] = useState('');
   const classifyingURL = customizedClassifier ? '/classify/customized_classifier/' : '/classify/';
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +34,9 @@ const ClassifyImageForm = ({
           // 'X-CSRFToken': csrftoken,
         }
       }).then(response => {
-        setClassification(response.data);
+        if (response?.status == 200) {
+          setClassification(response.data);
+        }
       });
     } catch (error) {
       console.log(error);
@@ -46,7 +48,6 @@ const ClassifyImageForm = ({
   return (
     <form onSubmit={handleSubmit}>
       <input
-        id="stylized"
         type="file"
         accept="image/*"
         onChange={handleInput}
