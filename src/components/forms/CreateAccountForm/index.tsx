@@ -1,6 +1,6 @@
 import { useState, FormEvent, ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { api, isAxiosError } from 'axiosConfig';
 import StringConstants from 'constants/strings';
 import 'components/forms/forms.css';
 
@@ -11,9 +11,15 @@ const CreateAccountForm = ({
   handlePasswordInput,
 }: CreateAccountFormProps) => {
   const navigate = useNavigate();
+  const [inputUsername, setInputUsername] = useState("");
   const [inputConfirmPassword, setInputConfirmPassword] = useState('');
   const [formSubmitError, setFormSubmitError] = useState('');
   const [creatingAccount, setCreatingAccount] = useState(false);
+
+  const handleUsernameInput = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setInputUsername(e.currentTarget.value);
+  };
 
   const handleConfirmPasswordInput = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -29,29 +35,27 @@ const CreateAccountForm = ({
 
     const formData = new FormData();
     formData.append('email', inputEmail);
+    formData.append('username', inputUsername);
     formData.append('password', inputPassword);
-    try {
-      setCreatingAccount(true);
-      await axios.post('/classify/register_user/', formData, {
-        headers: {
-          'enctype': 'multipart/form-data',
-          // 'X-CSRFToken': csrftoken,
-        }
-      }).then(response => {
-        if (response?.status == 200) {
-          setFormSubmitError('');
-          navigate('/verifyaccount');
-        }
-      });
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
+    setCreatingAccount(true);
+    await api.post('/classify/register_user/', formData, {
+      headers: {
+        'enctype': 'multipart/form-data',
+      }
+    }).then(response => {
+      if (response?.status == 200) {
+        setFormSubmitError('');
+        navigate('/verifyaccount');
+      }
+    }).catch(error => {
+      if (isAxiosError(error)) {
         setFormSubmitError(error.response?.data.error ?? error.response?.data);
       } else {
         setFormSubmitError(StringConstants.UNEXPECTED_ERROR);
       }
-    } finally {
+    }).finally(() => {
       setCreatingAccount(false);
-    }
+    });
   };
 
   return (
@@ -60,6 +64,11 @@ const CreateAccountForm = ({
         type="email"
         placeholder="Email"
         onChange={handleEmailInput}
+      />
+      <input
+        type="text"
+        placeholder="Username"
+        onChange={handleUsernameInput}
       />
       <input
         type="password"

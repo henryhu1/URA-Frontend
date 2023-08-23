@@ -1,5 +1,5 @@
 import React, { useState, SetStateAction, Dispatch, ChangeEvent, FormEvent } from 'react';
-import axios from 'axios';
+import { api } from 'axiosConfig';
 import StringConstants from 'constants/strings';
 import 'components/forms/forms.css';
 
@@ -26,23 +26,21 @@ const ClassifyImageForm = ({
 
     const formData = new FormData();
     formData.append('image', image);
-    try {
-      setIsClassifying(true);
-      await axios.post(classifyingURL, formData, {
-        headers: {
-          'enctype': 'multipart/form-data',
-          // 'X-CSRFToken': csrftoken,
-        }
-      }).then(response => {
-        if (response?.status == 200) {
-          setClassification(response.data);
-        }
-      });
-    } catch (error) {
+    setIsClassifying(true);
+    await api.post(classifyingURL, formData, {
+      headers: {
+        'enctype': 'multipart/form-data',
+      }
+    }).then(response => {
+      if (response?.status == 200) {
+        setClassification(response.data);
+      }
+    }).catch(error => {
+      setClassification('');
       console.log(error);
-    } finally {
+    }).finally(() => {
       setIsClassifying(false);
-    }
+    });
   };
 
   return (

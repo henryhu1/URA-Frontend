@@ -1,46 +1,48 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import axios from 'axios';
+import { api } from 'axiosConfig';
+import AuthProvider from 'components/AuthProvider';
 import Login from 'components/Login';
+import Logout from 'components/Logout';
 import Main from 'components/Main';
 import MyAccount from 'components/MyAccount';
 import Navbar from 'components/Navbar';
 import VerifyAccount from 'components/VerifyAccount';
 import 'App.css';
 
-axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-axios.defaults.xsrfCookieName = "csrftoken";
+const App = () => {
 
-const App = () => (
-  <div className="App">
-    <BrowserRouter>
-      {/* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header> */}
+  const getCSRF = async () => {
+    await api.get('/classify/get_csrf_token/', { withCredentials: true })
+      .then(() => {
+        console.log("CSRF cookie fetched successfully!");
+      })
+      .catch(error => {
+        console.error("Error fetching CSRF cookie:", error);
+      });
+  };
 
-      <Navbar />
-      <Routes>
-        <Route path="/" Component={Main} />
-        <Route path="/login" Component={Login} />
-        <Route path="/verifyaccount" Component={VerifyAccount} />
-        <Route path="/myaccount" Component={MyAccount} />
-        {/* Add more routes as needed */}
-      </Routes>
+  useEffect(() => {
+    getCSRF();
+    console.log({"something": !!localStorage.getItem('token')});
+  }, []);
 
-  </BrowserRouter>
-    
-  </div>
-);
+  return (
+    <div className="App">
+      <BrowserRouter>
+        <AuthProvider alreadyAuthenticated={!!localStorage.getItem('token')}>
+          <Navbar />
+          <Routes>
+            <Route path="/" Component={Main} />
+            <Route path="/login" Component={Login} />
+            <Route path="/logout" Component={Logout} />
+            <Route path="/verifyaccount" Component={VerifyAccount} />
+            <Route path="/myaccount" Component={MyAccount} />
+          </Routes>
+        </AuthProvider>
+      </BrowserRouter>
+    </div>
+  );
+};
 
 export default App;

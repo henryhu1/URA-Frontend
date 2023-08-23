@@ -1,8 +1,10 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { api, isAxiosError } from 'axiosConfig';
 import StringConstants from 'constants/strings';
 
 const VerifyAccountForm = () => {
+  const navigate = useNavigate();
   const [codeInput, setCodeInput] = useState('');
   const [formSubmitError, setFormSubmitError] = useState('');
 
@@ -15,24 +17,30 @@ const VerifyAccountForm = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('code', codeInput);
-    try {
-      await axios.post('/classify/verify_email/', formData, {
-        headers: {
-          'enctype': 'multipart/form-data',
-          // 'X-CSRFToken': csrftoken,
+    await api.post('/classify/verify_email/', formData, {
+      headers: {
+        'enctype': 'multipart/form-data',
+      }
+    }).then(response => {
+      if (response?.status == 200) {
+        setFormSubmitError('');
+        const token = response.data.access_token;
+        localStorage.setItem('token', token);
+        navigate('/myaccount');
+      }
+    }).catch(error => {
+      if (isAxiosError(error)) {
+        if (error.response?.data.error) {
+          setFormSubmitError(error.response?.data.error);
+        } else if (error.response?.data.details) {
+          setFormSubmitError(error.response?.data.details);
+        } else {
+          setFormSubmitError(error.response?.data);
         }
-      }).then(response => {
-        if (response?.status == 200) {
-          setFormSubmitError('');
-        }
-      });
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        setFormSubmitError(error.response?.data.error ?? error.response?.data);
       } else {
         setFormSubmitError(StringConstants.UNEXPECTED_ERROR);
       }
-    }
+    });
   };
 
   return (

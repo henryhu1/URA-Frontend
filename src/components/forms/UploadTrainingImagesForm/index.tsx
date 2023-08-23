@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
-import axios from 'axios';
+import { api, isAxiosError } from 'axiosConfig';
 import compressFiles from 'utils/files';
 import NumberConstants from 'constants/numbers';
 import StringConstants from 'constants/strings';
@@ -8,6 +8,7 @@ import 'components/forms/forms.css';
 const UploadTrainingImagesForm = () => {
   const [zippedDataset, setZippedDataset] = useState<Blob>();
   const [isDataOverLimit, setIsDataOverLimit] = useState(false);
+  const [formSubmitError, setFormSubmitError] = useState('');
 
   const ref = React.useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -45,19 +46,19 @@ const UploadTrainingImagesForm = () => {
     const formData = new FormData();
     // formData.append('dataset', dataset);
     formData.append('dataset', zippedDataset, 'compressed_folder.zip');
-    try {
-      await axios.post('/classify/upload_and_train/', formData, {
-        headers: {
-          'enctype': 'multipart/form-data',
-          // 'X-CSRFToken': csrftoken,
-        }
-      }).then(response => {
-        console.log(response);
-      });
-    } catch (error) {
-      console.log(error);
-    // } finally {
-    }
+    await api.post('/classify/upload_and_train/', formData, {
+      headers: {
+        'enctype': 'multipart/form-data',
+      }
+    }).then(response => {
+      setFormSubmitError('');
+    }).catch(error => {
+      if (isAxiosError(error)) {
+        setFormSubmitError(error.response?.data.error ?? error.response?.data);
+      } else {
+        setFormSubmitError(StringConstants.UNEXPECTED_ERROR);
+      }
+    });
   };
 
   return (
@@ -78,9 +79,12 @@ const UploadTrainingImagesForm = () => {
         onChange={handleFolderInput}
         ref={ref}
       />
-      <button type="submit" disabled={isDataOverLimit}>
-        {StringConstants.UPLOAD}
-      </button>
+      <span className="input-help">
+        <small>{formSubmitError}</small>
+        <button type="submit" disabled={isDataOverLimit}>
+          {StringConstants.UPLOAD}
+        </button>
+      </span>
     </form>
   );
 };
