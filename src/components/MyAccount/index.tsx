@@ -35,7 +35,10 @@ const MyAccount = () => {
 
   const handleDelete = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    await api.post('/classify/delete_model');
+    await api.delete('/classify/delete_custom_model')
+      .then(() => {
+        fetchData();
+      });
   };
 
   useEffect(() => {
@@ -51,17 +54,17 @@ const MyAccount = () => {
           <div className="loading-dots--dot"></div>
         </div> :
         <div className="Customized">
-          <>
-            {hasCustomModel ?
-              <DeleteCustomModel handleDeleteModel={handleDelete} /> :
-              <UploadTrainingImagesForm />
-            }
-          </>
-          <ClassifyImageForm setIsClassifying={setIsCustomClassifying} setClassification={setCustomClassification} customizedClassifier />
-          {isCustomClassifying ? (
-            <div className="loader" />
-          ) :
-          customClassification ?? <></>
+          {hasCustomModel ?
+            <>
+              <DeleteCustomModel handleDeleteModel={handleDelete} />
+              <ClassifyImageForm setIsClassifying={setIsCustomClassifying} setClassification={setCustomClassification} customizedClassifier />
+              {isCustomClassifying ? (
+                <div className="loader" />
+              ) :
+              customClassification ?? <></>
+              }
+            </> :
+            <UploadTrainingImagesForm />
           }
         </div>
       }
