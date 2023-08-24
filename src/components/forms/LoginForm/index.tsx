@@ -6,9 +6,9 @@ import StringConstants from 'constants/strings';
 import 'components/forms/forms.css';
 
 const LoginForm = ({
-  inputEmail,
+  inputUsername,
   inputPassword,
-  handleEmailInput,
+  handleUsernameInput,
   handlePasswordInput,
 }: LoginFormProps) => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const LoginForm = ({
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('username', inputEmail);
+    formData.append('username', inputUsername);
     formData.append('password', inputPassword);
     await api.post('/classify/authenticate_user/', formData, {
       headers: {
@@ -47,9 +47,9 @@ const LoginForm = ({
   return (
     <form onSubmit={handleSubmit}>
       <input
-        type="email"
-        placeholder="Email"
-        onChange={handleEmailInput}
+        type="text"
+        placeholder="Username"
+        onChange={handleUsernameInput}
       />
       <input
         type="password"
@@ -68,9 +68,9 @@ const LoginForm = ({
 };
 
 type LoginFormProps = {
-  inputEmail: string,
+  inputUsername: string,
   inputPassword: string,
-  handleEmailInput: (e: ChangeEvent<HTMLInputElement>) => void,
+  handleUsernameInput: (e: ChangeEvent<HTMLInputElement>) => void,
   handlePasswordInput: (e: ChangeEvent<HTMLInputElement>) => void,
 };
 

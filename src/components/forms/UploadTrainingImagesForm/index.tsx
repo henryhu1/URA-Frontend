@@ -8,6 +8,7 @@ import 'components/forms/forms.css';
 const UploadTrainingImagesForm = () => {
   const [zippedDataset, setZippedDataset] = useState<Blob>();
   const [isDataOverLimit, setIsDataOverLimit] = useState(false);
+  const [hasStartedTraining, setHasStartedTraining] = useState(false);
   const [formSubmitError, setFormSubmitError] = useState('');
 
   const ref = React.useRef<HTMLInputElement>(null);
@@ -50,8 +51,9 @@ const UploadTrainingImagesForm = () => {
       headers: {
         'enctype': 'multipart/form-data',
       }
-    }).then(response => {
+    }).then(() => {
       setFormSubmitError('');
+      setHasStartedTraining(true);
     }).catch(error => {
       if (isAxiosError(error)) {
         setFormSubmitError(error.response?.data.error ?? error.response?.data);
@@ -63,6 +65,7 @@ const UploadTrainingImagesForm = () => {
 
   return (
     <form onSubmit={handleUpload}>
+      {StringConstants.UPLOAD_AND_TRAIN}
       {/* <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)}>
         {({getRootProps, getInputProps}) => (
           <section>
@@ -81,9 +84,11 @@ const UploadTrainingImagesForm = () => {
       />
       <span className="input-help">
         <small>{formSubmitError}</small>
+        <small>{hasStartedTraining ? StringConstants.CURRENTLY_TRAINING : ""}</small>
         <button type="submit" disabled={isDataOverLimit}>
           {StringConstants.UPLOAD}
         </button>
+        <small>{StringConstants.TRAINING_TIME}</small>
       </span>
     </form>
   );

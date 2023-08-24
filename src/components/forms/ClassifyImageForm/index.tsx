@@ -45,6 +45,7 @@ const ClassifyImageForm = ({
 
   return (
     <form onSubmit={handleSubmit}>
+      {customizedClassifier ? StringConstants.CUSTOM : StringConstants.BASIC}
       <input
         type="file"
         accept="image/*"

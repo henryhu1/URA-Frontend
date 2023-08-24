@@ -20,9 +20,9 @@ const Login = () => {
   return (
     <div className="Login">
       <LoginForm
-        inputEmail={inputEmail}
+        inputUsername={inputEmail}
         inputPassword={inputPassword}
-        handleEmailInput={handleEmailInput}
+        handleUsernameInput={handleEmailInput}
         handlePasswordInput={handlePasswordInput}
       />
       <hr />
