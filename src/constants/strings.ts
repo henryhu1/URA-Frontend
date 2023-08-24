@@ -5,6 +5,8 @@ const StringConstants = {
   CURRENTLY_TRAINING: "Your model is being trained...",
   CUSTOM: "CUSTOM",
   DELETE: "Delete",
+  DOWNLOAD: "Download",
+  DOWNLOADING_MODEL: "Currently downloading model...",
   HOME: "Home",
   LOGIN: "Login",
   LOGOUT: "Logout",

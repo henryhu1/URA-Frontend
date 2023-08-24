@@ -1,16 +1,16 @@
 import React, { useState, useEffect, MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from 'axiosConfig';
-import useAuth from 'auth/useAuth';
 import UploadTrainingImagesForm from 'components/forms/UploadTrainingImagesForm';
 import DeleteCustomModel from 'components/DeleteCustomModel';
+import DownloadCustomModel from 'components/DownloadCustomModel';
 import ClassifyImageForm from 'components/forms/ClassifyImageForm';
 import './index.css';
 
 const MyAccount = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
   const [gettingUserData, setGettingUserData] = useState(true);
+  const [downloadingModel, setDownloadingModel] = useState(false);
   const [hasCustomModel, setHasCustomModel] = useState(false);
   const [customClassification, setCustomClassification] = useState('');
   const [isCustomClassifying, setIsCustomClassifying] = useState(false);
@@ -41,6 +41,22 @@ const MyAccount = () => {
       });
   };
 
+  const handleDownload = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setDownloadingModel(true);
+    await api.get('/classify/download_custom_model', { responseType: 'blob' })
+      .then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'model.zip');
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode?.removeChild(link);
+        setDownloadingModel(false);
+      });
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -57,6 +73,7 @@ const MyAccount = () => {
           {hasCustomModel ?
             <>
               <DeleteCustomModel handleDeleteModel={handleDelete} />
+              <DownloadCustomModel downloadingModel={downloadingModel} handleDownloadModel={handleDownload} />
               <ClassifyImageForm setIsClassifying={setIsCustomClassifying} setClassification={setCustomClassification} customizedClassifier />
               {isCustomClassifying ? (
                 <div className="loader" />
