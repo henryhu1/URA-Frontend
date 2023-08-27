@@ -33,7 +33,7 @@ const ClassifyImageForm = ({
       }
     }).then(response => {
       if (response?.status == 200) {
-        setClassification(response.data);
+        setClassification(response.data.prediction);
       }
     }).catch(error => {
       setClassification('');
@@ -46,7 +46,13 @@ const ClassifyImageForm = ({
   return (
     <form onSubmit={handleSubmit}>
       {customizedClassifier ? StringConstants.CUSTOM : StringConstants.BASIC}
+      <br/>
+      {!customizedClassifier && 
+        <label htmlFor="img">{StringConstants.BASIC_CLASSIFIER}</label>
+      }
+      <br/>
       <input
+        id="img"
         type="file"
         accept="image/*"
         onChange={handleInput}
@@ -58,6 +64,7 @@ const ClassifyImageForm = ({
       </>
       ) : <></>
       }
+      <br/>
       <button type="submit">
         {StringConstants.CLASSIFY}
       </button>

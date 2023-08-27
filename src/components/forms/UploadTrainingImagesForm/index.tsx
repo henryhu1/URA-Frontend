@@ -3,10 +3,12 @@ import { api, isAxiosError } from 'axiosConfig';
 import compressFiles from 'utils/files';
 import NumberConstants from 'constants/numbers';
 import StringConstants from 'constants/strings';
+import ClassificationModels from 'enums/ClassificationModels';
 import 'components/forms/forms.css';
 
 const UploadTrainingImagesForm = () => {
   const [zippedDataset, setZippedDataset] = useState<Blob>();
+  const [modelType, setModelType] = useState(ClassificationModels.InceptionV3);
   const [isDataOverLimit, setIsDataOverLimit] = useState(false);
   const [hasStartedTraining, setHasStartedTraining] = useState(false);
   const [formSubmitError, setFormSubmitError] = useState('');
@@ -47,6 +49,7 @@ const UploadTrainingImagesForm = () => {
     const formData = new FormData();
     // formData.append('dataset', dataset);
     formData.append('dataset', zippedDataset, 'compressed_folder.zip');
+    formData.append('model_type', modelType);
     await api.post('/classify/upload_and_train/', formData, {
       headers: {
         'enctype': 'multipart/form-data',
@@ -82,11 +85,27 @@ const UploadTrainingImagesForm = () => {
         onChange={handleFolderInput}
         ref={ref}
       />
+      {StringConstants.MODEL_SELECTION}<br/>
+      {Object.entries(ClassificationModels).map(([key, value]) =>
+        <div key={key}>
+          <input
+            id={key}
+            type="radio"
+            disabled={(value as ClassificationModels) == ClassificationModels.VisionTransformer}
+            defaultChecked={(value as ClassificationModels) == ClassificationModels.InceptionV3}
+            name="modelType"
+            value={key}
+            onChange={() => setModelType(value)}
+          />
+          <label htmlFor={key}>{key}</label>
+          <br/>
+        </div>
+      )}
       <span className="input-help">
         <small>{formSubmitError}</small>
         <small>{hasStartedTraining ? StringConstants.CURRENTLY_TRAINING : ""}</small>
         <button type="submit" disabled={isDataOverLimit}>
-          {StringConstants.UPLOAD}
+          {StringConstants.START_TRAINING}
         </button>
         <small>{StringConstants.TRAINING_TIME}</small>
       </span>

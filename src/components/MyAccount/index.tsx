@@ -12,6 +12,7 @@ const MyAccount = () => {
   const { isAuthenticated } = useAuth();
   const [gettingUserData, setGettingUserData] = useState(true);
   const [hasCustomModel, setHasCustomModel] = useState(false);
+  const [isTraining, setIsTraining] = useState(true);
   const [customClassification, setCustomClassification] = useState('');
   const [isCustomClassifying, setIsCustomClassifying] = useState(false);
   const [classification, setClassification] = useState('');
@@ -26,6 +27,7 @@ const MyAccount = () => {
           } else {
             setGettingUserData(false);
             setHasCustomModel(response.data.existing_model);
+            setIsTraining(response.data.running_task);
           }
         }
       }).catch(() => {
@@ -54,16 +56,20 @@ const MyAccount = () => {
           <div className="loading-dots--dot"></div>
         </div> :
         <div className="Customized">
-          {hasCustomModel ?
-            <>
+          {hasCustomModel &&
               <DeleteCustomModel handleDeleteModel={handleDelete} />
+          }
+          {hasCustomModel && !isTraining &&
+            <>
               <ClassifyImageForm setIsClassifying={setIsCustomClassifying} setClassification={setCustomClassification} customizedClassifier />
               {isCustomClassifying ? (
                 <div className="loader" />
               ) :
               customClassification ?? <></>
               }
-            </> :
+            </>
+          }
+          {!hasCustomModel && !isTraining &&
             <UploadTrainingImagesForm />
           }
         </div>

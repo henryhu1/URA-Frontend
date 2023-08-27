@@ -51,6 +51,7 @@ const LoginForm = ({
         placeholder="Username"
         onChange={handleUsernameInput}
       />
+      <br />
       <input
         type="password"
         placeholder="Password"

@@ -65,16 +65,19 @@ const CreateAccountForm = ({
         placeholder="Email"
         onChange={handleEmailInput}
       />
+      <br />
       <input
         type="text"
         placeholder="Username"
         onChange={handleUsernameInput}
       />
+      <br />
       <input
         type="password"
         placeholder="Password"
         onChange={handlePasswordInput}
       />
+      <br />
       <input
         type="password"
         placeholder="Confirm Password"
