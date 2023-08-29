@@ -5,7 +5,7 @@ import StringConstants from 'constants/strings';
 import './index.css';
 
 const Navbar = () => {
-  const { isAuthenticated, login, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   console.log({"navbar": isAuthenticated});
 
   return (

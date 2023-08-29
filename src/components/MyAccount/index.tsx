@@ -1,7 +1,6 @@
 import React, { useState, useEffect, MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from 'axiosConfig';
-import useAuth from 'auth/useAuth';
 import UploadTrainingImagesForm from 'components/forms/UploadTrainingImagesForm';
 import DeleteCustomModel from 'components/DeleteCustomModel';
 import ClassifyImageForm from 'components/forms/ClassifyImageForm';
@@ -9,7 +8,6 @@ import './index.css';
 
 const MyAccount = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
   const [gettingUserData, setGettingUserData] = useState(true);
   const [hasCustomModel, setHasCustomModel] = useState(false);
   const [isTraining, setIsTraining] = useState(true);

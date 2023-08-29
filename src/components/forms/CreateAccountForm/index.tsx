@@ -14,7 +14,6 @@ const CreateAccountForm = ({
   const [inputUsername, setInputUsername] = useState("");
   const [inputConfirmPassword, setInputConfirmPassword] = useState('');
   const [formSubmitError, setFormSubmitError] = useState('');
-  const [creatingAccount, setCreatingAccount] = useState(false);
 
   const handleUsernameInput = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -37,7 +36,6 @@ const CreateAccountForm = ({
     formData.append('email', inputEmail);
     formData.append('username', inputUsername);
     formData.append('password', inputPassword);
-    setCreatingAccount(true);
     await api.post('/classify/register_user/', formData, {
       headers: {
         'enctype': 'multipart/form-data',
@@ -53,8 +51,6 @@ const CreateAccountForm = ({
       } else {
         setFormSubmitError(StringConstants.UNEXPECTED_ERROR);
       }
-    }).finally(() => {
-      setCreatingAccount(false);
     });
   };
 
