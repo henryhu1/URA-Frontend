@@ -25,11 +25,12 @@ const UploadTrainingImagesForm = () => {
     const fileList = e.target.files;
     if (!fileList) return;
 
-    // let totalSize = 0;
-    // Array.from(fileList).forEach(file => {
-    //   totalSize += file.size;
-    //   console.log(file.webkitRelativePath)
-    // });
+    if (fileList.length > 100) {
+      alert('Only 100 images allowed!');
+      setIsDataOverLimit(true);
+      return;
+    }
+
     const zippedBlob = await compressFiles(fileList);
 
     if (zippedBlob.size > NumberConstants.MAX_UPLOAD_SIZE) {
@@ -69,6 +70,7 @@ const UploadTrainingImagesForm = () => {
   return (
     <form onSubmit={handleUpload}>
       {StringConstants.UPLOAD_AND_TRAIN}
+      <br/>
       {/* <Dropzone onDrop={acceptedFiles => console.log(acceptedFiles)}>
         {({getRootProps, getInputProps}) => (
           <section>
@@ -85,6 +87,7 @@ const UploadTrainingImagesForm = () => {
         onChange={handleFolderInput}
         ref={ref}
       />
+      <br/>
       {StringConstants.MODEL_SELECTION}<br/>
       {Object.entries(ClassificationModels).map(([key, value]) =>
         <div key={key}>

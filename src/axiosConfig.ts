@@ -1,7 +1,7 @@
 import axios, { isAxiosError } from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000'
+  baseURL: process.env.REACT_APP_API_URL
 });
 
 api.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');

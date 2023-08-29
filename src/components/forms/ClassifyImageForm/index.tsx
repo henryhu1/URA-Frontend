@@ -48,9 +48,11 @@ const ClassifyImageForm = ({
       {customizedClassifier ? StringConstants.CUSTOM : StringConstants.BASIC}
       <br/>
       {!customizedClassifier && 
-        <label htmlFor="img">{StringConstants.BASIC_CLASSIFIER}</label>
+        <>
+          <label htmlFor="img">{StringConstants.BASIC_CLASSIFIER}</label>
+          <br/>
+        </>
       }
-      <br/>
       <input
         id="img"
         type="file"
