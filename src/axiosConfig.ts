@@ -5,6 +5,7 @@ const api = axios.create({
 });
 
 api.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+api.defaults.withCredentials = true;
 api.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 api.defaults.xsrfCookieName = "csrftoken";
 
