@@ -7,7 +7,6 @@ import Logout from 'components/Logout';
 import Main from 'components/Main';
 import MyAccount from 'components/MyAccount';
 import Navbar from 'components/Navbar';
-import VerifyAccount from 'components/VerifyAccount';
 import 'App.css';
 
 const App = () => {
@@ -36,7 +35,6 @@ const App = () => {
             <Route path="/" Component={Main} />
             <Route path="/login" Component={Login} />
             <Route path="/logout" Component={Logout} />
-            <Route path="/verifyaccount" Component={VerifyAccount} />
             <Route path="/myaccount" Component={MyAccount} />
           </Routes>
         </AuthProvider>

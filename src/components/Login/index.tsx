@@ -1,36 +1,30 @@
-import { useState, ChangeEvent } from 'react';
+import { useState } from 'react';
 import LoginForm from 'components/forms/LoginForm';
 import CreateAccountForm from 'components/forms/CreateAccountForm';
 import './index.css';
 
 const Login = () => {
-  const [inputEmail, setInputEmail] = useState('');
-  const [inputPassword, setInputPassword] = useState('');
-
-  const handleEmailInput = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setInputEmail(e.currentTarget.value);
-  };
-
-  const handlePasswordInput = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    setInputPassword(e.currentTarget.value);
-  };
+  const [loginUsername, setLoginUsername] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [requireEmailVerification, setRequireEmailVerification] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
 
   return (
     <div className="Login">
       <LoginForm
-        inputUsername={inputEmail}
-        inputPassword={inputPassword}
-        handleUsernameInput={handleEmailInput}
-        handlePasswordInput={handlePasswordInput}
+        loginUsername={loginUsername}
+        loginPassword={loginPassword}
+        requireEmailVerification={requireEmailVerification}
+        verificationCode={verificationCode}
+        setLoginUsername={setLoginUsername}
+        setLoginPassword={setLoginPassword}
+        setRequireEmailVerification={setRequireEmailVerification}
+        setVerificationCode={setVerificationCode}
       />
       <hr />
       <CreateAccountForm
-        inputEmail={inputEmail}
-        inputPassword={inputPassword}
-        handleEmailInput={handleEmailInput}
-        handlePasswordInput={handlePasswordInput}
+        setLoginUsername={setLoginUsername}
+        setRequireEmailVerification={setRequireEmailVerification}
       />
     </div>
   );

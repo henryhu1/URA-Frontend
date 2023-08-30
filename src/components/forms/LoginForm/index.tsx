@@ -1,4 +1,4 @@
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, FormEvent, Dispatch, SetStateAction } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, isAxiosError } from 'axiosConfig';
 import useAuth from 'auth/useAuth';
@@ -6,10 +6,14 @@ import StringConstants from 'constants/strings';
 import 'components/forms/forms.css';
 
 const LoginForm = ({
-  inputUsername,
-  inputPassword,
-  handleUsernameInput,
-  handlePasswordInput,
+  loginUsername,
+  loginPassword,
+  requireEmailVerification,
+  verificationCode,
+  setLoginUsername,
+  setLoginPassword,
+  setRequireEmailVerification,
+  setVerificationCode,
 }: LoginFormProps) => {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -18,8 +22,9 @@ const LoginForm = ({
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('username', inputUsername);
-    formData.append('password', inputPassword);
+    formData.append('username', loginUsername);
+    formData.append('password', loginPassword);
+    formData.append('code', verificationCode);
     await api.post('/classify/authenticate_user/', formData, {
       headers: {
         'enctype': 'multipart/form-data',
@@ -32,8 +37,25 @@ const LoginForm = ({
           localStorage.setItem('token', token);
           navigate('/myaccount');
         } else {
-          navigate('/verifyaccount');
+          setRequireEmailVerification(true);
+          setFormSubmitError(StringConstants.EMAIL_VERIFICATION_REQUIRED);
         }
+      }
+    }).catch(error => {
+      if (isAxiosError(error)) {
+        setFormSubmitError(error.response?.data.error ?? error.response?.data.detail);
+      } else {
+        setFormSubmitError(StringConstants.UNEXPECTED_ERROR);
+      }
+    });
+  };
+
+  const handleResendVerificationEmail = async () => {
+    const formData = new FormData();
+    formData.append('username', loginUsername);
+    await api.post('/classify/resend_email_verification/', formData, {
+      headers: {
+        'enctype': 'multipart/form-data',
       }
     }).catch(error => {
       if (isAxiosError(error)) {
@@ -49,19 +71,36 @@ const LoginForm = ({
       <input
         type="text"
         placeholder="Username"
-        onChange={handleUsernameInput}
+        value={loginUsername}
+        onChange={(e) => setLoginUsername(e.currentTarget.value)}
       />
       <br />
       <input
         type="password"
         placeholder="Password"
-        onChange={handlePasswordInput}
+        onChange={(e) => setLoginPassword(e.currentTarget.value)}
       />
+      {requireEmailVerification &&
+        <>
+          <br />
+          <small>{StringConstants.VERIFICATION_CODE}</small>
+          <input
+            type="text"
+            size={6}
+            maxLength={6}
+            onChange={(e) => setVerificationCode(e.currentTarget.value)}
+          />
+          <br />
+          <button type="button" onClick={() => handleResendVerificationEmail()}>
+            {StringConstants.RESEND_VERIFICATION_EMAIL}
+          </button>
+        </>
+      }
       <br />
       <span className="input-help">
         <small>{formSubmitError}</small>
         <button type="submit">
-          {StringConstants.LOGIN}
+          {requireEmailVerification ? StringConstants.VERIFY : StringConstants.LOGIN}
         </button>
       </span>
     </form>
@@ -69,10 +108,14 @@ const LoginForm = ({
 };
 
 type LoginFormProps = {
-  inputUsername: string,
-  inputPassword: string,
-  handleUsernameInput: (e: ChangeEvent<HTMLInputElement>) => void,
-  handlePasswordInput: (e: ChangeEvent<HTMLInputElement>) => void,
+  loginUsername: string,
+  loginPassword: string,
+  requireEmailVerification: boolean,
+  verificationCode: string,
+  setLoginUsername: Dispatch<SetStateAction<string>>
+  setLoginPassword: Dispatch<SetStateAction<string>>
+  setRequireEmailVerification: Dispatch<SetStateAction<boolean>>
+  setVerificationCode: Dispatch<SetStateAction<string>>
 };
 
 export default LoginForm;

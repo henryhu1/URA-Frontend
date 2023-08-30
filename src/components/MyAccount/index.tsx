@@ -21,7 +21,7 @@ const MyAccount = () => {
       .then(response => {
         if (response?.status == 200) {
           if (!response.data.is_verified) {
-            navigate('/verifyaccount');
+            navigate('/login');
           } else {
             setGettingUserData(false);
             setHasCustomModel(response.data.existing_model);
