@@ -28,6 +28,7 @@ const ClassifyImageForm = ({
     formData.append('image', image);
     setIsClassifying(true);
     await api.post(classifyingURL, formData, {
+      withCredentials: true,
       headers: {
         'enctype': 'multipart/form-data',
       }

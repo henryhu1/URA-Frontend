@@ -5,9 +5,6 @@ const api = axios.create({
 });
 
 api.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
-api.defaults.withCredentials = true;
-api.defaults.xsrfHeaderName = "X-CSRFTOKEN";
-api.defaults.xsrfCookieName = "csrftoken";
 
 api.interceptors.request.use(
   config => {
@@ -15,6 +12,9 @@ api.interceptors.request.use(
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
+    config.withCredentials = true;
+    config.xsrfHeaderName = "X-CSRFTOKEN";
+    config.xsrfCookieName = "csrftoken";
     return config;
   }
 );
