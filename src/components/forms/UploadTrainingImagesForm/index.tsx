@@ -34,7 +34,7 @@ const UploadTrainingImagesForm = () => {
     const zippedBlob = await compressFiles(fileList);
 
     if (zippedBlob.size > NumberConstants.MAX_UPLOAD_SIZE) {
-      alert('Zipped file size exceeds the 10 MB limit!');
+      alert('Zipped file size exceeds the 5MB limit!');
       setIsDataOverLimit(true);
       return;
     }
@@ -48,6 +48,7 @@ const UploadTrainingImagesForm = () => {
 
     // const zipBlob = await compressFiles(dataset);
     const formData = new FormData();
+    console.log(zippedDataset.size);
     // formData.append('dataset', dataset);
     formData.append('dataset', zippedDataset, 'compressed_folder.zip');
     formData.append('model_type', modelType);
@@ -81,12 +82,39 @@ const UploadTrainingImagesForm = () => {
           </section>
         )}
       </Dropzone> */}
-      <input
-        type="file"
-        name="upload dataset"
-        onChange={handleFolderInput}
-        ref={ref}
-      />
+      <div className="container">
+        <div className="directory-tree-wrapper">
+          <div className="directory-tree">
+            <ul>
+              <li><span className="folder"><span className="text">Uploading</span></span>
+                <ul>
+                  <li><span className="folder"><span className="text">Label1</span></span>
+                    <ul>
+                      <li><span className="file"><span className="text">File1.png</span></span></li>
+                      <li><span className="file"><span className="text">File2.jpg</span></span></li>
+                    </ul>
+                  </li>
+                  <li><span className="folder"><span className="text">Label2</span></span>
+                    <ul>
+                      <li><span className="file"><span className="text">File3.jpeg</span></span></li>
+                      <li><span className="file"><span className="text">File4.png</span></span></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="file-input">
+          <input
+            type="file"
+            name="upload dataset"
+            onChange={handleFolderInput}
+            ref={ref}
+          />
+        </div>
+        <div className="empty-space"/>
+      </div>
       <br/>
       {StringConstants.MODEL_SELECTION}<br/>
       {Object.entries(ClassificationModels).map(([key, value]) =>
