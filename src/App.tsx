@@ -1,45 +1,51 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ChakraProvider, ColorModeScript, VStack } from '@chakra-ui/react';
 import { api } from 'axiosConfig';
 import AuthProvider from 'components/AuthProvider';
+import ServerStatusProvider from 'components/ServerStatusProvider';
 import Login from 'components/Login';
 import Logout from 'components/Logout';
 import Main from 'components/Main';
 import MyAccount from 'components/MyAccount';
 import Navbar from 'components/Navbar';
-import 'App.css';
+import theme from 'theme';
 
 const App = () => {
+  const [isServerDown, setIsServerDown] = useState(false);
 
   const getCSRF = async () => {
     await api.get('/classify/get_csrf_token/', { withCredentials: true })
-      .then(() => {
-        console.log("CSRF cookie fetched successfully!");
-      })
-      .catch(error => {
-        console.error("Error fetching CSRF cookie:", error);
+      .catch(() => {
+        setIsServerDown(true);
       });
   };
 
   useEffect(() => {
     getCSRF();
-    console.log({"something": !!localStorage.getItem('token')});
   }, []);
 
   return (
-    <div className="App">
+    <>
       <BrowserRouter>
         <AuthProvider alreadyAuthenticated={!!localStorage.getItem('token')}>
-          <Navbar />
-          <Routes>
-            <Route path="/" Component={Main} />
-            <Route path="/login" Component={Login} />
-            <Route path="/logout" Component={Logout} />
-            <Route path="/myaccount" Component={MyAccount} />
-          </Routes>
+          <ServerStatusProvider isServerDown={isServerDown}>
+            <ChakraProvider theme={theme}>
+              <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+              <VStack h="100vh" overflow="hidden" align="left">
+                <Navbar />
+                <Routes>
+                  <Route path="/" Component={Main} />
+                  <Route path="/login" Component={Login} />
+                  <Route path="/logout" Component={Logout} />
+                  <Route path="/myaccount" Component={MyAccount} />
+                </Routes>
+              </VStack>
+            </ChakraProvider>
+          </ServerStatusProvider>
         </AuthProvider>
       </BrowserRouter>
-    </div>
+    </>
   );
 };
 

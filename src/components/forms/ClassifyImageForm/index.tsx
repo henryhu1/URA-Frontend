@@ -1,15 +1,18 @@
-import React, { useState, SetStateAction, Dispatch, ChangeEvent, FormEvent } from 'react';
+import React, { useState, SetStateAction, Dispatch, ChangeEvent, MouseEvent } from 'react';
+import { Button, FormControl, FormLabel, Heading, Image, Input, Text, VStack } from '@chakra-ui/react';
 import { api } from 'axiosConfig';
+import useServerStatus from 'components/ServerStatusProvider/useServerStatus';
 import StringConstants from 'constants/strings';
-import 'components/forms/forms.css';
 
 const ClassifyImageForm = ({
+  isClassifying,
   setIsClassifying,
   setClassification,
   customizedClassifier = false
 }: ClassifyImageFormProps) => {
   const [image, setImage] = useState<File>();
   const [imageURLString, setImageURLString] = useState('');
+  const { isServerDown } = useServerStatus();
   const classifyingURL = customizedClassifier ? '/classify/customized_classifier/' : '/classify/';
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -20,7 +23,7 @@ const ClassifyImageForm = ({
     setImageURLString(URL.createObjectURL(file));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!image) return;
 
@@ -45,37 +48,48 @@ const ClassifyImageForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {customizedClassifier ? StringConstants.CUSTOM : StringConstants.BASIC}
-      <br/>
-      {!customizedClassifier && 
-        <>
-          <label htmlFor="img">{StringConstants.BASIC_CLASSIFIER}</label>
-          <br/>
-        </>
-      }
-      <input
-        id="img"
-        type="file"
-        accept="image/*"
-        onChange={handleInput}
-      />
-      {imageURLString ? (
-      <>
-        <br />
-        <img width={500} alt="preview" src={imageURLString}/>
-      </>
-      ) : <></>
-      }
-      <br/>
-      <button type="submit">
-        {StringConstants.CLASSIFY}
-      </button>
-    </form>
+    <FormControl>
+      <VStack
+        justifyContent="center"
+        alignItems="center"
+        textAlign="center"
+      >
+        <FormLabel>
+          <Heading>
+            {customizedClassifier ? StringConstants.CUSTOM : StringConstants.BASIC}
+          </Heading>
+        </FormLabel>
+        {!customizedClassifier && 
+          <Text>
+            {StringConstants.BASIC_CLASSIFIER}
+          </Text>
+        }
+        <Input
+          id="img"
+          type="file"
+          accept="image/*"
+          variant="unstyled"
+          w="auto"
+          onChange={handleInput}
+        />
+        {imageURLString ? (
+          <Image width={500} alt="uploaded image" src={imageURLString} />
+        ) : <></>
+        }
+        <Button
+          isDisabled={isServerDown}
+          isLoading={isClassifying}
+          onClick={handleSubmit}
+        >
+          {StringConstants.CLASSIFY}
+        </Button>
+      </VStack>
+    </FormControl>
   );
 };
 
 type ClassifyImageFormProps = {
+  isClassifying: boolean,
   setIsClassifying: Dispatch<SetStateAction<boolean>>,
   setClassification: Dispatch<SetStateAction<string>>,
   customizedClassifier?: boolean,

@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { StackDivider, VStack } from '@chakra-ui/react';
+import Layout from 'components/common/Layout';
 import LoginForm from 'components/forms/LoginForm';
 import CreateAccountForm from 'components/forms/CreateAccountForm';
-import './index.css';
 
 const Login = () => {
   const [loginUsername, setLoginUsername] = useState('');
@@ -10,23 +11,28 @@ const Login = () => {
   const [verificationCode, setVerificationCode] = useState('');
 
   return (
-    <div className="Login">
-      <LoginForm
-        loginUsername={loginUsername}
-        loginPassword={loginPassword}
-        requireEmailVerification={requireEmailVerification}
-        verificationCode={verificationCode}
-        setLoginUsername={setLoginUsername}
-        setLoginPassword={setLoginPassword}
-        setRequireEmailVerification={setRequireEmailVerification}
-        setVerificationCode={setVerificationCode}
-      />
-      <hr />
-      <CreateAccountForm
-        setLoginUsername={setLoginUsername}
-        setRequireEmailVerification={setRequireEmailVerification}
-      />
-    </div>
+    <Layout>
+      <VStack
+        divider={<StackDivider w="100%" />}
+        spacing={4}
+        align="stretch"
+      >
+        <LoginForm
+          loginUsername={loginUsername}
+          loginPassword={loginPassword}
+          requireEmailVerification={requireEmailVerification}
+          verificationCode={verificationCode}
+          setLoginUsername={setLoginUsername}
+          setLoginPassword={setLoginPassword}
+          setRequireEmailVerification={setRequireEmailVerification}
+          setVerificationCode={setVerificationCode}
+        />
+        <CreateAccountForm
+          setLoginUsername={setLoginUsername}
+          setRequireEmailVerification={setRequireEmailVerification}
+        />
+      </VStack>
+    </Layout>
   );
 };
 

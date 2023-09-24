@@ -1,7 +1,8 @@
 import { useState, FormEvent, Dispatch, SetStateAction } from 'react';
+import { Button, Input, VStack } from '@chakra-ui/react';
 import { api, isAxiosError } from 'axiosConfig';
+import useServerStatus from 'components/ServerStatusProvider/useServerStatus';
 import StringConstants from 'constants/strings';
-import 'components/forms/forms.css';
 
 const CreateAccountForm = ({
   setLoginUsername,
@@ -12,6 +13,7 @@ const CreateAccountForm = ({
   const [createAccountPassword, setCreateAccountPassword] = useState('');
   const [createAccountConfirmPassword, setCreateAccountConfirmPassword] = useState('');
   const [formSubmitError, setFormSubmitError] = useState('');
+  const { isServerDown } = useServerStatus();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,36 +47,34 @@ const CreateAccountForm = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
+      <VStack>
+      <Input
         type="email"
         placeholder="Email"
         onChange={(e) => setCreateAccountEmail(e.currentTarget.value)}
       />
-      <br />
-      <input
+      <Input
         type="text"
         placeholder="Username"
         onChange={(e) => setCreateAccountUsername(e.currentTarget.value)}
       />
-      <br />
-      <input
+      <Input
         type="password"
         placeholder="Password"
         onChange={(e) => setCreateAccountPassword(e.currentTarget.value)}
       />
-      <br />
-      <input
+      <Input
         type="password"
         placeholder="Confirm Password"
         onChange={(e) => setCreateAccountConfirmPassword(e.currentTarget.value)}
       />
-      <br />
-      <span className="input-help">
+      <span>
         <small>{formSubmitError}</small>
-        <button type="submit">
+        <Button isDisabled={isServerDown} type="submit">
           {StringConstants.CREATE_ACCOUNT}
-        </button>
+        </Button>
       </span>
+      </VStack>
     </form>
   );
 };

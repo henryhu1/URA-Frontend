@@ -1,7 +1,7 @@
 import React, { ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from 'axiosConfig';
-import AuthContext from 'auth/authContext';
+import AuthContext from './authContext';
 
 const AuthProvider = ({
   alreadyAuthenticated = false,

@@ -1,9 +1,10 @@
 import { useState, FormEvent, Dispatch, SetStateAction } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button, Input, VStack } from '@chakra-ui/react';
 import { api, isAxiosError } from 'axiosConfig';
-import useAuth from 'auth/useAuth';
+import useAuth from 'components/AuthProvider/useAuth';
+import useServerStatus from 'components/ServerStatusProvider/useServerStatus';
 import StringConstants from 'constants/strings';
-import 'components/forms/forms.css';
 
 const LoginForm = ({
   loginUsername,
@@ -17,6 +18,7 @@ const LoginForm = ({
 }: LoginFormProps) => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { isServerDown } = useServerStatus();
   const [formSubmitError, setFormSubmitError] = useState('');
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -68,41 +70,39 @@ const LoginForm = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Username"
-        value={loginUsername}
-        onChange={(e) => setLoginUsername(e.currentTarget.value)}
-      />
-      <br />
-      <input
-        type="password"
-        placeholder="Password"
-        onChange={(e) => setLoginPassword(e.currentTarget.value)}
-      />
-      {requireEmailVerification &&
-        <>
-          <br />
-          <small>{StringConstants.VERIFICATION_CODE}</small>
-          <input
-            type="text"
-            size={6}
-            maxLength={6}
-            onChange={(e) => setVerificationCode(e.currentTarget.value)}
-          />
-          <br />
-          <button type="button" onClick={() => handleResendVerificationEmail()}>
-            {StringConstants.RESEND_VERIFICATION_EMAIL}
-          </button>
-        </>
-      }
-      <br />
-      <span className="input-help">
-        <small>{formSubmitError}</small>
-        <button type="submit">
-          {requireEmailVerification ? StringConstants.VERIFY : StringConstants.LOGIN}
-        </button>
-      </span>
+      <VStack>
+        <Input
+          type="text"
+          placeholder="Username"
+          value={loginUsername}
+          onChange={(e) => setLoginUsername(e.currentTarget.value)}
+        />
+        <Input
+          type="password"
+          placeholder="Password"
+          onChange={(e) => setLoginPassword(e.currentTarget.value)}
+        />
+        {requireEmailVerification &&
+          <>
+            <small>{StringConstants.VERIFICATION_CODE}</small>
+            <Input
+              type="text"
+              // size={6}
+              maxLength={6}
+              onChange={(e) => setVerificationCode(e.currentTarget.value)}
+            />
+            <Button onClick={() => handleResendVerificationEmail()}>
+              {StringConstants.RESEND_VERIFICATION_EMAIL}
+            </Button>
+          </>
+        }
+        <span>
+          <small>{formSubmitError}</small>
+          <Button isDisabled={isServerDown} type="submit">
+            {requireEmailVerification ? StringConstants.VERIFY : StringConstants.LOGIN}
+          </Button>
+        </span>
+      </VStack>
     </form>
   );
 };

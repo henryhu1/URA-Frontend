@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import ClassifyImageForm from 'components/forms/ClassifyImageForm';
 import { useNavigate } from 'react-router-dom';
-// import { api } from 'axiosConfig';
-import useAuth from 'auth/useAuth';
-import './index.css';
+import { Text, VStack } from '@chakra-ui/react';
+import useAuth from 'components/AuthProvider/useAuth';
+import useServerStatus from 'components/ServerStatusProvider/useServerStatus';
+import Layout from 'components/common/Layout';
+import ClassifyImageForm from 'components/forms/ClassifyImageForm';
+import FeatureList from 'components/FeatureList';
+import StringConstants from 'constants/strings';
 
 const Main = () => {
   const navigate = useNavigate();
   const [classification, setClassification] = useState('');
   const [isClassifying, setIsClassifying] = useState(false);
   const { isAuthenticated } = useAuth();
+  const { isServerDown } = useServerStatus();
 
   // const checkAccount = async () => {
   //   await api.get('/classify/my_account/')
@@ -34,16 +38,21 @@ const Main = () => {
   }, []);
 
   return (
-    <div className="Main">
-      {/* <UploadTrainingImagesForm />
-      <ClassifyImageForm setIsClassifying={setIsClassifying} setClassification={setClassification} customizedClassifier /> */}
-      <ClassifyImageForm setIsClassifying={setIsClassifying} setClassification={setClassification} />
-      {isClassifying ? (
-        <div className="loader" />
-      ) :
-      classification ?? <></>
-      }
-    </div>
+    <Layout>
+      <VStack
+        spacing={4}
+        align="center"
+      >
+        {isServerDown && <Text>{StringConstants.SERVER_DOWN}</Text>}
+        <ClassifyImageForm
+          isClassifying={isClassifying}
+          setIsClassifying={setIsClassifying}
+          setClassification={setClassification}
+        />
+        <Text>{classification}</Text>
+        <FeatureList />
+      </VStack>
+    </Layout>
   );
 };
 
