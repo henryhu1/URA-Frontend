@@ -32,7 +32,7 @@ const App = () => {
           <ServerStatusProvider isServerDown={isServerDown}>
             <ChakraProvider theme={theme}>
               <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-              <VStack h="100vh" overflow="hidden" align="left">
+              <VStack h="100vh" overflow="auto" align="left">
                 <Navbar />
                 <Routes>
                   <Route path="/" Component={Main} />

@@ -15,7 +15,7 @@ const Layout = ({ children }: LayoutProps ) => {
         justifyContent="center"
         alignItems="center"
         m={4}
-        height={flexHeight}
+        // height={flexHeight}
       >
         {children}
       </Flex>
